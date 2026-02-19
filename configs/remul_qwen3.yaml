@@ -1,0 +1,70 @@
+data:
+  train_files: data/parquet/train.parquet
+  val_files: data/parquet/val_bbh.parquet
+  train_batch_size: 64
+  val_batch_size: 64
+  max_prompt_length: 4096
+  max_response_length: 8192
+  filter_overlong_prompts: true
+  truncation: right
+
+custom_reward_function:
+  path: train/reward_function.py
+  name: compute_score
+
+actor_rollout_ref:
+  model:
+    path: Qwen/Qwen3-14B
+    trust_remote_code: true
+    use_remove_padding: true
+
+  actor:
+    optim:
+      lr: 1.0e-6
+    ppo_mini_batch_size: 64
+    ppo_micro_batch_size_per_gpu: 4
+    ppo_epochs: 1
+    clip_ratio: 0.2
+    use_kl_loss: true              
+    kl_loss_coef: 0.001
+    kl_loss_type: low_var_kl
+    entropy_coeff: 0.001
+    loss_agg_mode: token-mean
+    fsdp_config:
+      fsdp_size: -1
+    checkpoint:
+      save_contents: ['model', 'hf_model']
+
+  rollout:
+    name: vllm
+    n: 5
+    temperature: 0.7
+    top_p: 0.9
+    dtype: bfloat16
+    gpu_memory_utilization: 0.8
+    tensor_model_parallel_size: 1
+    log_prob_micro_batch_size_per_gpu: 8
+    enable_chunked_prefill: false
+
+  ref:
+    fsdp_config:
+      param_offload: true
+    log_prob_micro_batch_size_per_gpu: 4
+
+algorithm:
+  adv_estimator: grpo
+  use_kl_in_reward: false
+  gamma: 1.0
+  lam: 1.0
+
+trainer:
+  total_epochs: 3
+  project_name: remul
+  experiment_name: cross_execution_training
+  logger: ['console', 'wandb']
+  nnodes: 1
+  n_gpus_per_node: 4
+  save_freq: 500
+  test_freq: 500
+  val_before_train: true
+  default_local_dir: outputs/cross_execution_training
