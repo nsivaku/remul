@@ -5,7 +5,7 @@
 
 [Nithin Sivakumaran](https://nsivaku.github.io/) | [Shoubin Yu](https://yui010206.github.io/) | [Hyunji Lee](https://amy-hyunji.github.io/) | [Yue Zhang](https://zhangyuejoslin.github.io/) | [Ali Payani](https://www.linkedin.com/in/ali-payani-59267515/) | [Mohit Bansal](https://www.cs.unc.edu/~mbansal/) | [Elias Stengel-Eskin](https://esteng.github.io/)
 
-![Your Image](images/main-**figure**.png)
+![Your Image](images/main-figure.png)
 Figure: REMUL consists of two components: (Top) A speaker-listener reasoning execution reward, where listeners execute reasoning prefixes from a speaker, who is rewarded for listener consensus. The speaker’s final answer is only used for reward computation and not seen by the listeners. (Bottom) A masked supervised finetuning step to maintain correctness via a LoRA adapter, with loss computed only on answer tokens.
 
 ## Installation
